@@ -3,6 +3,7 @@ using FirstWebAPI.Dtos.Stock;
 using FirstWebAPI.Helpers;
 using FirstWebAPI.Interfaces;
 using FirstWebAPI.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FirstWebAPI.Controllers
@@ -18,6 +19,7 @@ namespace FirstWebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
             if (!ModelState.IsValid)
