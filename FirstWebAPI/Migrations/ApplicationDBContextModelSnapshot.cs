@@ -116,6 +116,21 @@ namespace FirstWebAPI.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("FirstWebAPI.Models.Portfolio", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppUserId", "StockId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("Portfolios");
+                });
+
             modelBuilder.Entity("FirstWebAPI.Models.Stock", b =>
                 {
                     b.Property<int>("Id")
@@ -179,13 +194,13 @@ namespace FirstWebAPI.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c4264da8-77ec-4d60-bc6b-96b54e22cc9a",
+                            Id = "207489ad-dde3-402a-89b2-e76758329058",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "49f77ab0-5bbb-4373-a904-aff6e6275210",
+                            Id = "c2d9cb89-d61c-43ae-980f-e8bdf81aa4b3",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -306,6 +321,25 @@ namespace FirstWebAPI.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("FirstWebAPI.Models.Portfolio", b =>
+                {
+                    b.HasOne("FirstWebAPI.Models.AppUser", "AppUser")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FirstWebAPI.Models.Stock", "Stock")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -357,9 +391,16 @@ namespace FirstWebAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FirstWebAPI.Models.AppUser", b =>
+                {
+                    b.Navigation("Portfolios");
+                });
+
             modelBuilder.Entity("FirstWebAPI.Models.Stock", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Portfolios");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,8 @@
-﻿namespace FirstWebAPI.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FirstWebAPI.Models
 {
+    [Table("Comments")]
     public class Comment
     {
         public int Id { get; set; }
