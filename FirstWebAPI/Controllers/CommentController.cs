@@ -1,6 +1,9 @@
 ﻿using FirstWebAPI.Dtos.Comment;
+using FirstWebAPI.Extensions;
 using FirstWebAPI.Interfaces;
 using FirstWebAPI.Mappers;
+using FirstWebAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FirstWebAPI.Controllers
@@ -11,10 +14,12 @@ namespace FirstWebAPI.Controllers
     {
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepo;
-        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo)
+        private readonly UserManager<AppUser> _userManager;
+        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepo, UserManager<AppUser> userManager)
         {
             _commentRepo = commentRepo;
             _stockRepo = stockRepo;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -55,7 +60,13 @@ namespace FirstWebAPI.Controllers
                 return BadRequest("Stock does not exist");
             }
 
+            var username = User.GetUsername();
+            var appUser = await _userManager.FindByNameAsync(username);
+
             var commentModel = commentDto.ToCommentFromCreateRequest(stockId);
+
+            commentModel.AppUserId = appUser.Id;
+
             await _commentRepo.CreateAsync(commentModel);
             return CreatedAtAction(nameof(GetById), new { id = commentModel.Id }, commentModel.ToCommentDto());
         }
